@@ -5,12 +5,13 @@ EAPI=6
 PYTHON_COMPAT=( python3_{4,5,6} )
 
 if [[ "${PV}" == "9999" ]]; then
-	EGIT_REPO_URI="https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers.git"
+	EGIT_REPO_URI="https://github.com/KhronosGroup/Vulkan-Loader.git"
+	EGIT_SUBMODULES=()
 	inherit git-r3
 else
 	KEYWORDS="~amd64"
-	SRC_URI="https://github.com/KhronosGroup/Vulkan-LoaderAndValidationLayers/archive/sdk-${PV}.tar.gz -> ${P}.tar.gz"
-	S="${WORKDIR}/Vulkan-LoaderAndValidationLayers-sdk-${PV}"
+	SRC_URI="https://github.com/KhronosGroup/Vulkan-Loader/archive/sdk-${PV}.tar.gz -> ${P}.tar.gz"
+	S="${WORKDIR}/Vulkan-Loader-sdk-${PV}"
 fi
 
 inherit python-any-r1 cmake-multilib
@@ -25,26 +26,25 @@ REQUIRED_USE="demos? ( X )"
 
 RDEPEND=""
 DEPEND="${PYTHON_DEPS}
-	demos? ( dev-util/glslang:=[${MULTILIB_USEDEP}] )
-	layers? (
-			dev-util/glslang:=[${MULTILIB_USEDEP}]
-			>=dev-util/spirv-tools-2018.2-r1:=[${MULTILIB_USEDEP}]
-		)
+	dev-util/vulkan-headers
+	demos? ( media-libs/vulkan-tools:=[${MULTILIB_USEDEP}] )
+	layers? ( media-libs/vulkan-layers:=[${MULTILIB_USEDEP}] )
 	wayland? ( dev-libs/wayland:=[${MULTILIB_USEDEP}] )
 	X? (
 		x11-libs/libX11:=[${MULTILIB_USEDEP}]
 		x11-libs/libXrandr:=[${MULTILIB_USEDEP}]
 	)"
 
-PATCHES=( "${FILESDIR}/${PN}-Use-a-file-to-get-the-spirv-tools-commit-ID.patch" )
+PATCHES=(
+	"${FILESDIR}/${P}-Do-not-install-vulkan-headers.patch"
+	"${FILESDIR}/${P}-Move-registry-location-to-vulkan-headers-folder.patch"
+	"${FILESDIR}/${P}-Use-usr-for-vulkan-headers.patch"
+)
 
 multilib_src_configure() {
 	local mycmakeargs=(
 		-DCMAKE_SKIP_RPATH=True
 		-DBUILD_TESTS=False
-		-DBUILD_LAYERS=$(usex layers)
-		-DBUILD_DEMOS=$(usex demos)
-		-DBUILD_VKJSON=False
 		-DBUILD_LOADER=True
 		-DBUILD_WSI_MIR_SUPPORT=False
 		-DBUILD_WSI_WAYLAND_SUPPORT=$(usex wayland)

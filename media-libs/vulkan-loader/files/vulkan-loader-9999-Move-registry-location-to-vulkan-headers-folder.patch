@@ -1,0 +1,28 @@
+From d9b3835e1ad455853e3a58ec0d2a0653e5952a21 Mon Sep 17 00:00:00 2001
+From: Nick Sarnie <sarnex@gentoo.org>
+Date: Mon, 21 May 2018 21:43:02 -0400
+Subject: [PATCH] Move registry location to vulkan-headers folder
+
+Signed-off-by: Nick Sarnie <sarnex@gentoo.org>
+---
+ CMakeLists.txt | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 14034d33c..6b79ca4de 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -125,8 +125,8 @@ set (PYTHON_CMD ${PYTHON_EXECUTABLE})
+ # Define macro used for building vkxml generated files
+ macro(run_vk_xml_generate dependency output)
+     add_custom_command(OUTPUT ${output}
+-    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/lvl_genvk.py -registry ${HEADERS_DIR}/registry/vk.xml ${output}
+-    DEPENDS ${HEADERS_DIR}/registry/vk.xml ${SCRIPTS_DIR}/generator.py ${SCRIPTS_DIR}/${dependency} ${SCRIPTS_DIR}/lvl_genvk.py ${SCRIPTS_DIR}/reg.py
++    COMMAND ${PYTHON_CMD} ${SCRIPTS_DIR}/lvl_genvk.py -registry ${HEADERS_DIR}/include/vulkan/registry/vk.xml ${output}
++    DEPENDS ${HEADERS_DIR}/include/vulkan/registry/vk.xml ${SCRIPTS_DIR}/generator.py ${SCRIPTS_DIR}/${dependency} ${SCRIPTS_DIR}/lvl_genvk.py ${SCRIPTS_DIR}/reg.py
+     )
+ endmacro()
+ 
+-- 
+2.17.0
+
